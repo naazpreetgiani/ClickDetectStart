@@ -6,13 +6,19 @@ let ctx = cnv.getContext("2d");
 cnv.width = 800;
 cnv.height = 600;
 
+// Global Variables
+let mouseIsPressed = false;
+let mouseX, mouseY;
+
+// Green Circles Array
 let circles = [];
-for (let n = 1; n <= 10; n++) {
+for (let n = 1; n <= 5; n++) {
     circles.push(randomCircle());
 }
 
+// Red Rectangles Array
 let rectangles = [];
-for (let n = 1; n <= 10; n++) {
+for (let n = 1; n <= 5; n++) {
     rectangles.push(randomRectangle());
 }
 
@@ -83,11 +89,11 @@ function moveRectangle(aRectangle) {
    
     //Check for collisions with canvas boundaries
     if (aRectangle.y > cnv.height || aRectangle.y < 0) {
-        aRectangle.y = randomInt(1, cnv.height);
+        aRectangle.y -= aRectangle.y;
     }
 
     if (aRectangle.x > cnv.width || aRectangle.x < 0) {
-        aRectangle.x = randomInt(1, cnv.width)
+        aRectangle.x -= aRectangle.x;
     }
 }
 
@@ -96,9 +102,49 @@ function randomRectangle() {
         x: randomInt(0, cnv.width),
         y: randomInt(0, cnv.height),
         r: randomInt(10, 50),
-        xs: randomInt(1, 5),
-        ys: randomInt(1, 5),
-        sx: randomInt(10, 50),
-        sy: randomInt(10, 50)
+        xs: randomInt(1, 3),
+        ys: randomInt(1, 3),
+        sx: randomInt(20, 60),
+        sy: randomInt(20, 60)
     }
+}
+
+// Event Listeners & Handlers
+document.addEventListener("mousedown", mousedownHandler);
+document.addEventListener("mouseup", mouseupHandler);
+
+function mousedownHandler(event) {
+    mouseIsPressed = true;
+    let cnvRect = cnv.getBoundingClientRect();
+    mouseX = event.x - cnvRect.x;
+    mouseY = event.y - cnvRect.y;
+
+    // Check for Clicked Circle
+    for (let i = 0; i < circles.length; i++) {
+        let circle = circles[i];
+        let distance = Math.sqrt((mouseX - circle.x) ** 2 + (mouseY - circle.y) ** 2);
+    
+        if (mouseIsPressed && distance <= circle.r) {
+            circles.splice(i, 1);
+        }
+    }  
+
+    if (circles.length === 0) {
+        return alert("Game Over - You WIN")
+    }
+    // Check for Cliked Rectangle
+    for (let i = 0; i < rectangles.length; i++) {
+        let rectangle = rectangles[i];
+        if (mouseX >= rectangle.x &&
+            mouseX <= rectangle.x + rectangle.sx &&
+            mouseY >= rectangle.y &&
+            mouseY <= rectangle.y + rectangle.sy) {
+         return alert("Game Over - You LOSE!");
+        }
+    } 
+}
+
+ 
+function mouseupHandler() {
+    mouseIsPressed = false;
 }

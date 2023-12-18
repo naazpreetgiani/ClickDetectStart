@@ -22,7 +22,7 @@ for (let n = 1; n <= 5; n++) {
     rectangles.push(randomRectangle());
 }
 
-window.addEventListener("load", draw)
+window.addEventListener("load", draw);
 
 function draw() {
     ctx.fillStyle = "black";
@@ -64,14 +64,13 @@ function moveCircle(aCircle) {
     }
 }
 
-
 function randomCircle() {
    return {
         x: randomInt(0, cnv.width),
         y: randomInt(0, cnv.height),
-        r: randomInt(10, 50),
-        xs: randomInt(1, 5),
-        ys: randomInt(1, 5)
+        r: randomInt(30, 60),
+        xs: randomInt(1, 3),
+        ys: randomInt(1, 3)
     }
 }
 
@@ -113,7 +112,10 @@ function randomRectangle() {
 document.addEventListener("mousedown", mousedownHandler);
 document.addEventListener("mouseup", mouseupHandler);
 
+requestAnimationFrame(draw);
+
 function mousedownHandler(event) {
+    window.addEventListener("load", draw);
     mouseIsPressed = true;
     let cnvRect = cnv.getBoundingClientRect();
     mouseX = event.x - cnvRect.x;
@@ -127,11 +129,13 @@ function mousedownHandler(event) {
         if (mouseIsPressed && distance <= circle.r) {
             circles.splice(i, 1);
         }
+
+        if (circles.length === 0) {
+            return location.reload(alert("Game Over - You WIN"));
+        } 
     }  
 
-    if (circles.length === 0) {
-        return alert("Game Over - You WIN")
-    }
+   
     // Check for Cliked Rectangle
     for (let i = 0; i < rectangles.length; i++) {
         let rectangle = rectangles[i];
@@ -139,12 +143,12 @@ function mousedownHandler(event) {
             mouseX <= rectangle.x + rectangle.sx &&
             mouseY >= rectangle.y &&
             mouseY <= rectangle.y + rectangle.sy) {
-         return alert("Game Over - You LOSE!");
+            return location.reload(alert("Game Over - You LOSE!"));
         }
     } 
+    
 }
 
- 
 function mouseupHandler() {
     mouseIsPressed = false;
 }
